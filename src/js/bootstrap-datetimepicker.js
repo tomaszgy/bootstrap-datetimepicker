@@ -826,8 +826,18 @@
                 if (isValid(targetMoment)) {
                     date = targetMoment;
                     viewDate = date.clone();
-                    input.val(date.format(actualFormat));
-                    element.data('date', date.format(actualFormat));
+                    var allowedFormats = options.extraFormats.concat(options.format)
+                    var outputFormat = actualFormat;
+                    var creationFormat = date._f;
+
+                    // we should not use private property ._f of an object date but rather use date.creationData()['format'],
+                    // although for today creationData() function is on development branch of moment.js
+
+                    if(allowedFormats.indexOf(date._f) != -1){
+                        outputFormat = date._f;
+                    }
+                    input.val(date.format(outputFormat));
+                    element.data('date', date.format(outputFormat));
                     unset = false;
                     update();
                     notifyEvent({
