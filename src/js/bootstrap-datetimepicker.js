@@ -800,7 +800,7 @@
                 fillTime();
             },
 
-            setValue = function (targetMoment) {
+            setValue = function (targetMoment, specifiedFormat) {
                 var oldDate = unset ? null : date;
 
                 // case of calling setValue(null or false)
@@ -826,16 +826,19 @@
                 if (isValid(targetMoment)) {
                     date = targetMoment;
                     viewDate = date.clone();
-                    var allowedFormats = options.extraFormats.concat(options.format)
-                    var outputFormat = actualFormat;
-                    var creationFormat = date._f;
 
+                    var outputFormat = actualFormat;
+
+                    if (typeof specifiedFormat === 'undefined') {
+                        if (parseFormats.indexOf(date._f) != -1) {
+                            outputFormat = date._f;
+                        }
+                    } else {
+                        outputFormat = specifiedFormat;
+                    }
                     // we should not use private property ._f of an object date but rather use date.creationData()['format'],
                     // although for today creationData() function is on development branch of moment.js
-
-                    if(allowedFormats.indexOf(date._f) != -1){
-                        outputFormat = date._f;
-                    }
+                    
                     input.val(date.format(outputFormat));
                     element.data('date', date.format(outputFormat));
                     unset = false;
@@ -974,7 +977,7 @@
                     if ($(e.target).is('.new')) {
                         day.add(1, 'M');
                     }
-                    setValue(day.date(parseInt($(e.target).text(), 10)));
+                    setValue(day.date(parseInt($(e.target).text(), 10)), actualFormat);
                     if (!hasTime() && !options.keepOpen && !options.inline) {
                         hide();
                     }
